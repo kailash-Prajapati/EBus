@@ -2,12 +2,56 @@ pipeline {
     agent {
         label 'devops'
     } 
+
+    environment  {
+        SCANNER_HOME=tool 'sonar-scanner'
+    }
+    stages {
+        stage('Cleaning Workspace') {
+            steps {
+                cleanWs()
+            }
+        }
     
     stages{
         stage("Clone Code"){
             steps {
                 echo "Cloning the code"
                 git branch: 'main', url: 'https://github.com/kailash-Prajapati/EBus.git'
+            }
+        }
+
+        stage('Sonarqube Analysis ') {
+            steps {
+                dir('src') {
+                    withSonarQubeEnv('sonar-server') {
+                        sh ''' $SCANNER_HOME/bin/sonar-scanner \
+                        -Dsonar.projectName=Ebus \
+                        -Dsonar.projectKey=Ebus '''
+                    }
+                }
+            }
+        }
+        stage('QualityGate') {
+            steps {
+                script {
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token' 
+                }
+            }
+        }
+        stage('OWASP Scan') {
+            steps {
+                dir('src/') {
+                    dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
+                    dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+                }
+            }
+        }
+        stage('TrivyFScan') {
+            steps {
+                dir('src/') {
+                    sh 'trivy fs . > trivyfs.txt'
+                }
             }
         }
 
