@@ -13,14 +13,14 @@ pipeline {
             }
         }
     }
-    stages{
+    stages {
         stage("Clone Code"){
             steps {
                 echo "Cloning the code"
                 git branch: 'main', url: 'https://github.com/kailash-Prajapati/EBus.git'
             }
         }
-
+    }
         stage('Sonarqube Analysis ') {
             steps {
                 dir('src') {
@@ -81,4 +81,4 @@ pipeline {
             }
         }
     }
-}
+} 
