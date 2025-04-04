@@ -28,7 +28,7 @@ pipeline {
                         sh ''' $SCANNER_HOME/bin/sonar-scanner \
                         -Dsonar.projectName=Ebus \
                         -Dsonar.projectKey=Ebus 
-                        -Dsonar.login=your_sonar_token '''
+                         '''
                     }
                 }
             }
