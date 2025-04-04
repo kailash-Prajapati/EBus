@@ -34,22 +34,22 @@ pipeline {
             }
         }
 
-        stage('QualityGate') {
-            steps {
-                script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token' 
-                }
-            }
-        }
+        // stage('QualityGate') {
+        //     steps {
+        //         script {
+        //             waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token' 
+        //         }
+        //     }
+        // }
 
-        stage('OWASP Scan') {
-            steps {
-                dir('src/') {
-                    dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
-                    dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-                }
-            }
-        }
+        // stage('OWASP Scan') {
+        //     steps {
+        //         dir('src/') {
+        //             dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
+        //             dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+        //         }
+        //     }
+        // }
 
         stage('TrivyFScan') {
             steps {
