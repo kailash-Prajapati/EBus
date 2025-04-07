@@ -70,9 +70,9 @@ pipeline {
             steps {
                 echo "Pushing the image to docker hub"
                 withCredentials([usernamePassword(credentialsId:"dockerHub",passwordVariable:"dockerHubPass",usernameVariable:"dockerHubUser")]){
-                sh "docker tag php-web ${env.dockerHubUser}/php-web:latest"
+                sh "docker tag phpweb ${env.dockerHubUser}/phpweb:latest"
                 sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}"
-                sh "docker push ${env.dockerHubUser}/php-web:latest"
+                sh "docker push ${env.dockerHubUser}/phpweb:latest"
                 }
             }
         }
