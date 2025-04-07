@@ -80,6 +80,8 @@ pipeline {
         stage("Deploy") {
             steps {
                 echo "Deploying the container"
+                sh "docker stop webserver"
+                sh "docker rm webserver"
                 sh "docker run -dit --name webserver -p 80:80 phpweb:latest"
             }
         }
