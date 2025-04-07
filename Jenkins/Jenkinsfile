@@ -42,20 +42,27 @@ pipeline {
         //     }
         // }
 
-        stage('OWASP Scan') {
-            steps {
-                dir('src/') {
-                    dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
-                    dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-                }
-            }
-        }
+        // stage('OWASP Scan') {
+        //     steps {
+        //         dir('src/') {
+        //             dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
+        //             dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+        //         }
+        //     }
+        // }
 
         stage('TrivyFScan') {
             steps {
                 dir('src/') {
                     sh 'trivy fs . > trivyfs.txt'
                 }
+            }
+        }
+
+        stage("Build") {
+            steps {
+                echo "Building the image"
+                sh "docker build -t phpweb ."
             }
         }
 
@@ -67,13 +74,6 @@ pipeline {
                 sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}"
                 sh "docker push ${env.dockerHubUser}/php-web:latest"
                 }
-            }
-        }
-
-        stage("Build") {
-            steps {
-                echo "Building the image"
-                sh "docker build -t phpweb ."
             }
         }
 
