@@ -34,30 +34,41 @@ pipeline {
             }
         }
 
-        // stage('QualityGate') {
-        //     steps {
-        //         script {
-        //             waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token' 
-        //         }
-        //     }
-        // }
+        stage('QualityGate') {
+            steps {
+                script {
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token' 
+                }
+            }
+        }
 
-        // stage('OWASP Scan') {
-        //     steps {
-        //         dir('src/') {
-        //             dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
-        //             dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-        //         }
-        //     }
-        // }
+        stage('OWASP Scan') {
+            steps {
+                dir('src/') {
+                    dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
+                    dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+                }
+            }
+        }
 
-        // stage('TrivyFScan') {
-        //     steps {
-        //         dir('src/') {
-        //             sh 'trivy fs . > trivyfs.txt'
-        //         }
-        //     }
-        // }
+        stage('TrivyFScan') {
+            steps {
+                dir('src/') {
+                    sh 'trivy fs . > trivyfs.txt'
+                }
+            }
+        }
+
+        stage("Push to Docker Hub"){
+            steps {
+                echo "Pushing the image to docker hub"
+                withCredentials([usernamePassword(credentialsId:"dockerHub",passwordVariable:"dockerHubPass",usernameVariable:"dockerHubUser")]){
+                sh "docker tag my-note-app ${env.dockerHubUser}/my-note-app:latest"
+                sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}"
+                sh "docker push ${env.dockerHubUser}/my-note-app:latest"
+                }
+            }
+        }
 
         stage("Build") {
             steps {
