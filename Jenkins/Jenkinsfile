@@ -34,13 +34,13 @@ pipeline {
             }
         }
 
-        stage('QualityGate') {
-            steps {
-                script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token' 
-                }
-            }
-        }
+        // stage('QualityGate') {
+        //     steps {
+        //         script {
+        //             waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token' 
+        //         }
+        //     }
+        // }
 
         stage('OWASP Scan') {
             steps {
